@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Kitchen Dashboard</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<style>
+.card-order {
+    border-left: 5px solid orange;
+}
+</style>
+</head>
+
+<body class="bg-light">
+
+<div class="container py-5">
+<h2>Kitchen Dashboard</h2>
+
+<div id="orders"></div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getDatabase, ref, onValue, update } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "YOUR_KEY",
+  authDomain: "YOUR_DOMAIN",
+  databaseURL: "YOUR_DB_URL",
+  projectId: "YOUR_ID"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+// 🔥 DRAFT ORDERS (LIVE CART)
+onValue(ref(db, "draftOrders"), (snapshot) => {
+    let data = snapshot.val();
+    let container = document.getElementById("draftOrders");
+
+    container.innerHTML = "<h4>Live Orders (Not yet checked out)</h4>";
+
+    for(let key in data){
+        let order = data[key];
+
+        let items = "";
+        order.items.forEach(i => {
+            items += `<li>${i.name} x${i.qty}</li>`;
+        });
+
+        container.innerHTML += `
+        <div class="card p-3 mb-2 border-warning">
+            <h6>${order.table}</h6>
+            <ul>${items}</ul>
+            <span class="badge bg-warning text-dark">Draft</span>
+        </div>`;
+    }
+});
+
+// 🔥 FINAL ORDERS
+onValue(ref(db, "orders"), (snapshot) => {
+    let data = snapshot.val();
+    let container = document.getElementById("orders");
+
+    container.innerHTML = "<h4>Confirmed Orders</h4>";
+
+    for(let id in data){
+        let order = data[id];
+
+        let items = "";
+        order.items.forEach(i => {
+            items += `<li>${i.name} x${i.qty}</li>`;
+        });
+
+        container.innerHTML += `
+        <div class="card p-3 mb-3 border-success">
+            <h5>${order.table}</h5>
+            <ul>${items}</ul>
+            <p>Status: ${order.status}</p>
+
+            <button onclick="setStatus('${id}','Preparing')" class="btn btn-warning btn-sm">Preparing</button>
+            <button onclick="setStatus('${id}','Served')" class="btn btn-success btn-sm">Served</button>
+        </div>`;
+    }
+});
+
+window.setStatus = function(id, status){
+    update(ref(db, "orders/" + id), { status });
+};
+</script>
+
+</body>
+</html>

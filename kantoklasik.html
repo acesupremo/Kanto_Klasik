@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kanto Klasik</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<!-- AOS -->
+<link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">
+
+<style>
+body {
+    background: #111;
+    color: #fff;
+}
+
+/* LOADER */
+#loader {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background: #111;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    flex-direction: column;
+}
+
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid #333;
+    border-top: 5px solid #ff6b00;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    100% { transform: rotate(360deg); }
+}
+
+.navbar-brand {
+    color: #ff6b00 !important;
+    font-weight: bold;
+}
+
+.hero {
+    min-height: 90vh;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    background: linear-gradient(rgba(0,0,0,0.6),rgba(0,0,0,0.6)),
+    url('https://images.unsplash.com/photo-1504674900247-0877df9cc836');
+    background-size: cover;
+}
+
+.highlight { color:#ff6b00; }
+
+.btn-main {
+    background:#ff6b00;
+    color:#fff;
+    border-radius:30px;
+}
+
+.card {
+    border-radius:15px;
+}
+
+.price {
+    color:#ff6b00;
+    font-weight:bold;
+}
+
+.section {
+    padding:60px 0;
+}
+
+.footer {
+    text-align:center;
+    padding:20px;
+    color:#aaa;
+}
+
+/* MINI CART */
+#miniCart {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #222;
+    padding: 15px;
+    border-radius: 15px;
+    width: 250px;
+}
+</style>
+</head>
+
+<body>
+
+<!-- LOADING SCREEN -->
+<div id="loader">
+    <div class="spinner"></div>
+    <p class="mt-3">Loading Kanto Klasik...</p>
+</div>
+
+<!-- NAVBAR -->
+<nav class="navbar navbar-expand-lg bg-dark">
+    <div class="container">
+        <a class="navbar-brand" href="#">Kanto Klasik</a>
+
+        <button class="navbar-toggler bg-light" data-bs-toggle="collapse" data-bs-target="#nav"></button>
+
+        <div class="collapse navbar-collapse justify-content-center" id="nav">
+            <ul class="navbar-nav">
+                <li class="nav-item"><a class="nav-link text-white" href="#">Home</a></li>
+                <li class="nav-item"><a class="nav-link text-white" href="menu.html">Menu</a></li>
+                <li class="nav-item"><a class="nav-link text-white" href="about.html">About</a></li>
+                <li class="nav-item"><a class="nav-link text-white" href="contact.html">Contact</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+<div class="container" data-aos="fade-up">
+    <h1>Welcome to <span class="highlight">Kanto Klasik</span></h1>
+    <p>Street food done right.</p>
+    <a href="menu.html" class="btn btn-main mt-3">Order Now</a>
+</div>
+</section>
+
+<!-- BEST SELLERS -->
+<section class="section container">
+<h2 class="text-center mb-4" data-aos="fade-up">🔥 Best Sellers</h2>
+
+<div class="row g-4">
+
+<div class="col-md-4" data-aos="zoom-in">
+<div class="card">
+<img src="2.png" class="card-img-top">
+<div class="card-body text-center">
+<h5>Chaoegg</h5>
+<p class="price">₱49</p>
+</div>
+</div>
+</div>
+
+<div class="col-md-4" data-aos="zoom-in">
+<div class="card">
+<img src="6.png" class="card-img-top">
+<div class="card-body text-center">
+<h5>Chaofil</h5>
+<p class="price">₱89</p>
+</div>
+</div>
+</div>
+
+<div class="col-md-4" data-aos="zoom-in">
+<div class="card">
+<img src="7.png" class="card-img-top">
+<div class="card-body text-center">
+<h5>Chaoliem</h5>
+<p class="price">₱99</p>
+</div>
+</div>
+</div>
+
+</div>
+</section>
+
+<!-- LOCATION -->
+<section class="section bg-dark text-center">
+<div class="container" data-aos="fade-up">
+<h2>📍 Visit Us</h2>
+<p>Kanto Klasik - Your neighborhood food spot</p>
+
+<iframe 
+src="https://maps.google.com/maps?q=Quezon%20City&t=&z=13&ie=UTF8&iwloc=&output=embed"
+width="100%" height="300" style="border:0; border-radius:10px;">
+</iframe>
+</div>
+</section>
+
+<!-- FOOTER -->
+<div class="footer">
+© 2026 Kanto Klasik
+</div>
+
+<!-- MINI CART -->
+<div id="miniCart">
+<h6>🛒 Cart</h6>
+<div id="cartItems"></div>
+<small id="cartTotal"></small>
+</div>
+
+<!-- SCRIPTS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+
+<script>
+AOS.init();
+
+// LOADER
+window.onload = () => {
+    document.getElementById("loader").style.display = "none";
+};
+
+// MINI CART
+function loadCart(){
+let cart = JSON.parse(localStorage.getItem("cart")) || [];
+let html = "";
+let total = 0;
+
+cart.forEach(i=>{
+html += `<div>${i.name} x${i.qty}</div>`;
+total += i.price * i.qty;
+});
+
+document.getElementById("cartItems").innerHTML = html || "Cart is empty";
+document.getElementById("cartTotal").innerText = "Total: ₱" + total;
+}
+
+loadCart();
+</script>
+
+</body>
+</html>
